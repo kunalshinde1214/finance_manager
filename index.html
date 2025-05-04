@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <style>
+        :root {
+            --primary: #b19cd9; /* Light purple for modern financial aesthetic */
+            --secondary: #d4a017; /* Gold retained for wealth */
+            --accent: #2f2f5b; /* Dark purple-blue for depth and trust */
+            --text: #f5f5f5;
+            --dark: #0a0a1a; /* Dark background for sophistication */
+            --light: #ffffff;
+            --success: #4CAF50; /* Retained for positive results */
+            --warning: #FF9800;
+            --danger: #f44336;
+            --card-bg: rgba(255, 255, 255, 0.15);
+            --gradient-1: linear-gradient(135deg, #b19cd9, #2f2f5b); /* Light purple to dark purple-blue */
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', 'Helvetica', sans-serif; /* Professional font */
+            transition: all 0.3s ease-in-out;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Subtle financial pattern overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"%3E%3Ctext x="10" y="30" font-size="20" fill="rgba(255,255,255,0.05)"%3E%24%3C/text%3E%3C/svg%3E');
+            opacity: 0.2;
+            z-index: -2;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        nav {
+            background: rgba(10, 10, 26, 0.9); /* Darker nav for contrast */
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--secondary); /* Gold border for elegance */
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            margin: 0 1rem;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--secondary); /* Gold on hover */
+        }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px; /* Professional button shape */
+            background: var(--gradient-1);
+            color: var(--light);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            background: var(--secondary); /* Gold on hover */
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5rem;
+            text-align: center;
+            background: radial-gradient(circle, rgba(177, 156, 217, 0.2), transparent); /* Subtle light purple gradient */
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        .tool {
+            padding: 5rem;
+            background: linear-gradient(180deg, var(--dark), #1c1c3a); /* Dark with purple tint */
+        }
+
+        .tool-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--secondary); /* Gold border for financial touch */
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2, h3 {
+            color: var(--secondary); /* Gold for headings */
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--accent); /* Dark purple-blue border */
+            border-radius: 8px;
+            color: var(--text);
+        }
+
+        input:focus {
+            border-color: var(--secondary); /* Gold on focus */
+            outline: none;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            margin: 0 10px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position crystaltoken.com
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            border-radius: 34px;
+            cursor: pointer;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary); /* Light purple when checked */
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-value {
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--accent); /* Dark purple-blue border */
+        }
+
+        .pie-chart {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 1rem auto;
+            position: relative;
+        }
+
+        .pie-chart::before {
+            content: '';
+            position: absolute;
+            width: 75px;
+            height: 75px;
+            background: var(--dark);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .pie-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+
+        .bar-container {
+            height: 150px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            margin: 1rem 0;
+        }
+
+        .bar {
+            width: 30px;
+            background-color: var(--primary); /* Light purple bars */
+            border-radius: 5px 5px 0 0;
+            transition: height 1s ease;
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+        }
+
+        .tips-container {
+            margin-top: 2rem;
+        }
+
+        .tip-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--secondary); /* Gold accent */
+        }
+
+        footer {
+            padding: 2rem 5%;
+            background: rgba(10, 10, 26, 0.9);
+            text-align: center;
+            opacity: 0.7;
+            border-top: 1px solid var(--accent); /* Dark purple-blue border */
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+
+    <nav>
+        <div class="logo">FinanceManager</div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#tool">Tool</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <button class="btn" onclick="scrollToTool()">Get Started</button>
+    </nav>
+
+    <section class="hero" id="home">
+        <div>
+            <h1>Master Your Financial Future</h1>
+            <p>Plan, track, and grow your wealth with our sophisticated tools designed for individuals and families.</p>
+            <button class="btn" onclick="scrollToTool()">Start Planning</button>
+        </div>
+    </section>
+
+    <section class="tool" id="tool">
+        <div class="tool-container">
+            <h2>Financial Planning Tool</h2>
+            <div class="step active" id="step-orientation">
+                <h3>Are you managing finances for yourself or your family?</h3>
+                <div class="radio-group">
+                    <button class="btn" onclick="selectOrientation('single')">Myself</button>
+                    <button class="btn" onclick="selectOrientation('family')">Family</button>
+                </div>
+            </div>
+
+            <div class="step" id="step-income">
+                <h3>Income Details</h3>
+                <div class=" 보내기
+form-group" id="income-form">
+                    <label for="monthly-income">Monthly Income (after tax)</label>
+                    <input type="number" id="monthly-income" placeholder="Enter total monthly income" required>
+                </div>
+                <div class="form-group">
+                    <label for="income-source">Primary Income Source</label>
+                    <select id="income-source">
+                        <option value="salary">Salary</option>
+                        <option value="business">Business</option>
+                        <option value="freelance">Freelance</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <button class="btn" onclick="nextStep('step-expenses')">Next</button>
+                </div>
+            </div>
+
+            <div class="step" id="step-expenses">
+                <h3>Expense Details</h3>
+                <div class="form-group">
+                    <label for="rent">Monthly Rent/Mortgage</label>
+                    <input type="number" id="rent" placeholder="Enter amount">
+                </div>
+                <div class="form-group">
+                    <label for="utilities">Monthly Utilities</label>
+                    <input type="number" id="utilities" placeholder="Enter amount">
+                </div>
+                <div class="form-group">
+                    <label for="groceries">Monthly Groceries</label>
+                    <input type="number" id="groceries" placeholder="Enter amount">
+                </div>
+                <div class="form-group">
+                    <label>Do you own a vehicle?</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="vehicle" value="yes"> Yes</label>
+                        <label><input type="radio" name="vehicle" value="no" checked> No</label>
+                    </div>
+                </div>
+                <div id="vehicle-expenses" style="display: none;">
+                    <div class="form-group">
+                        <label for="fuel">Monthly Fuel Expenses</label>
+                        <input type="number" id="fuel" placeholder="Enter amount">
+                    </div>
+                    <div class="form-group">
+                        <label for="vehicle-maintenance">Monthly Vehicle Maintenance</label>
+                        <input type="number" id="vehicle-maintenance" placeholder="Enter amount">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="dining">Monthly Dining Out</label>
+                    <input type="number" id="dining" placeholder="Enter amount">
+                </div>
+                <div class="form-group">
+                    <label for="entertainment">Monthly Entertainment</label>
+                    <input type="number" id="entertainment" placeholder="Enter amount">
+                </div>
+                <div class="toggle-container">
+                    <span>Use simulated UPI data</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="upi-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="btn-group">
+                    <button class="btn" onclick="prevStep('step-income')">Back</button>
+                    <button class="btn" onclick="calculateResults()">Calculate</button>
+                </div>
+            </div>
+
+            <div class="step" id="step-results">
+                <h3>Financial Summary</h3>
+                <div class="result-item">
+                    <span>Total Monthly Income</span>
+                    <span class="result-value" id="result-income">₹0</span>
+                </div>
+                <div class="result-item">
+                    <span>Total Monthly Expenses</span>
+                    <span class="result-value" id="result-expenses">₹0</span>
+                </div>
+                <div class="result-item">
+                    <span>Monthly Savings</span>
+                    <span class="result-value" id="result-savings">₹0</span>
+                </div>
+                <div class="result-item">
+                    <span>Average Daily Expenditure</span>
+                    <span class="result-value" id="result-daily">₹0</span>
+                </div>
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <div>Expense Breakdown</div>
+                        <div class="pie-chart" id="expense-chart"></div>
+                        <div class="pie-legend">
+                            <div class="legend-item"><div class="legend-color" style="background: var(--primary);"></div>Housing</div>
+                            <div class="legend-item"><div class="legend-color" style="background: var(--success);"></div>Utilities</div>
+                            <div class="legend-item"><div class="legend-color" style="background: var(--warning);"></div>Food</div>
+                            <div class="legend-item"><div class="legend-color" style="background: var(--danger);"></div>Other</div>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div>Cash Flow</div>
+                        <div class="bar-container">
+                            <div class="bar" id="income-bar" style="height: 0px;"><div class="bar-label">Income</div></div>
+                            <div class="bar" id="expenses-bar" style="height: 0px; background: var(--warning);"><div class="bar-label">Expenses</div></div>
+                            <div class="bar" id="savings-bar" style="height: 0px; background: var(--success);"><div class="bar-label">Savings</div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tips-container" id="financial-tips"></div>
+                <button class="btn" onclick="resetForm()">Start Over</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        © 2025 FinanceManager. All rights reserved.
+    </footer>
+
+    <script>
+        let userOrientation = '';
+        const steps = document.querySelectorAll('.step');
+
+        function scrollToTool() {
+            document.getElementById('tool').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function selectOrientation(orientation) {
+            userOrientation = orientation;
+            if (orientation === 'family') {
+                document.getElementById('income-form').innerHTML = `
+                    <label for="monthly-income">Total Family Monthly Income (after tax)</label>
+                    <input type="number" id="monthly-income" placeholder="Enter total family income" required>
+                `;
+            }
+            nextStep('step-income');
+        }
+
+        function nextStep(nextId) {
+            steps.forEach(step => step.classList.remove('active'));
+            document.getElementById(nextId).classList.add('active');
+        }
+
+        function prevStep(prevId) {
+            steps.forEach(step => step.classList.remove('active'));
+            document.getElementById(prevId).classList.add('active');
+        }
+
+        document.querySelectorAll('input[name="vehicle"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                document.getElementById('vehicle-expenses').style.display = radio.value === 'yes' ? 'block' : 'none';
+            });
+        });
+
+        document.getElementById('upi-toggle').addEventListener('change', function() {
+            if (this.checked) {
+                document.getElementById('rent').value = userOrientation === 'family' ? 30000 : 22000;
+                document.getElementById('utilities').value = userOrientation === 'family' ? 7000 : 5000;
+                document.getElementById('groceries').value = userOrientation === 'family' ? 18000 : 12000;
+                document.querySelector('input[name="vehicle"][value="yes"]').checked = true;
+                document.getElementById('vehicle-expenses').style.display = 'block';
+                document.getElementById('fuel').value = userOrientation === 'family' ? 7000 : 5000;
+                document.getElementById('vehicle-maintenance').value = userOrientation === 'family' ? 3000 : 2000;
+                document.getElementById('dining').value = userOrientation === 'family' ? 12000 : 8000;
+                document.getElementById('entertainment').value = userOrientation === 'family' ? 6000 : 4000;
+            } else {
+                document.querySelectorAll('#step-expenses input[type="number"]').forEach(input => input.value = '');
+                document.getElementById('vehicle-expenses').style.display = 'none';
+            }
+        });
+
+        function calculateResults() {
+            const income = parseFloat(document.getElementById('monthly-income').value) || 0;
+            const rent = parseFloat(document.getElementById('rent').value) || 0;
+            const utilities = parseFloat(document.getElementById('utilities').value) || 0;
+            const groceries = parseFloat(document.getElementById('groceries').value) || 0;
+            const fuel = parseFloat(document.getElementById('fuel').value) || 0;
+            const maintenance = parseFloat(document.getElementById('vehicle-maintenance').value) || 0;
+            const dining = parseFloat(document.getElementById('dining').value) || 0;
+            const entertainment = parseFloat(document.getElementById('entertainment').value) || 0;
+
+            const totalExpenses = rent + utilities + groceries + fuel + maintenance + dining + entertainment;
+            const savings = income - totalExpenses;
+            const dailyExpenditure = totalExpenses / 30;
+
+            document.getElementById('result-income').textContent = '₹' + income.toLocaleString();
+            document.getElementById('result-expenses').textContent = '₹' + totalExpenses.toLocaleString();
+            document.getElementById('result-savings').textContent = '₹' + savings.toLocaleString();
+            document.getElementById('result-daily').textContent = '₹' + dailyExpenditure.toFixed(0);
+
+            const housingPercent = ((rent / totalExpenses) * 100).toFixed(0);
+            const utilitiesPercent = ((utilities / totalExpenses) * 100).toFixed(0);
+            const foodPercent = (((groceries + dining) / totalExpenses) * 100).toFixed(0);
+            const otherPercent = (100 - housingPercent - utilitiesPercent - foodPercent).toFixed(0);
+
+            document.getElementById('expense-chart').style.background = 
+                `conic-gradient(
+                    var(--primary) 0% ${housingPercent}%, 
+                    var(--success) ${housingPercent}% ${parseInt(housingPercent) + parseInt(utilitiesPercent)}%, 
+                    var(--warning) ${parseInt(housingPercent) + parseInt(utilitiesPercent)}% ${parseInt(housingPercent) + parseInt(utilitiesPercent) + parseInt(foodPercent)}%, 
+                    var(--danger) ${parseInt(housingPercent) + parseInt(utilitiesPercent) + parseInt(foodPercent)}% 100%
+                )`;
+
+            const maxValue = Math.max(income, totalExpenses, savings);
+            const heightMultiplier = 130 / maxValue;
+            setTimeout(() => {
+                document.getElementById('income-bar').style.height = (income * heightMultiplier) + 'px';
+                document.getElementById('expenses-bar').style.height = (totalExpenses * heightMultiplier) + 'px';
+                document.getElementById('savings-bar').style.height = (savings * heightMultiplier) + 'px';
+            }, 500);
+
+            const tipsContainer = document.getElementById('financial-tips');
+            tipsContainer.innerHTML = '';
+            const savingRatio = (savings / income) * 100;
+            const tips = [
+                `<span>💰</span> Aim to save at least 20% of your income.`,
+                savingRatio < 10 ? `<span>⚠️</span> Saving rate low. Reduce non-essential spending.` : `<span>🎯</span> Good saving rate! Consider investing.`,
+                `<span>📊</span> Monitor daily expenses to stay within budget.`
+            ];
+            tips.forEach(tip => {
+                const div = document.createElement('div');
+                div.className = 'tip-card';
+                div.innerHTML = tip;
+                tipsContainer.appendChild(div);
+            });
+
+            nextStep('step-results');
+        }
+
+        function resetForm() {
+            document.querySelectorAll('input').forEach(input => input.value = '');
+            document.querySelector('input[name="vehicle"][value="no"]').checked = true;
+            document.getElementById('vehicle-expenses').style.display = 'none';
+            document.getElementById('upi-toggle').checked = false;
+            steps.forEach(step => step.classList.remove('active'));
+            document.getElementById('step-orientation').classList.add('active');
+        }
+
+        // Particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: '#d4a017' }, /* Gold particles */
+                shape: { type: 'circle' },
+                opacity: { value: 0.5 },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: '#b19cd9', opacity: 0.2, width: 1 }, /* Light purple lines */
+                move: { enable: true, speed: 2, direction: 'none', random: false, straight: false, out_mode: 'out' }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true, mode: 'push' }, resize: true },
+                modes: { grab: { distance: 140, line_linked: { opacity: 1 } }, push: { particles_nb: 4 } }
+            },
+            retina_detect: true
+        });
+    </script>
+</body>
+</html>
